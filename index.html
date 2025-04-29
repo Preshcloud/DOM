@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Animated Image Gallery</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f5f5;
+    }
+
+    header {
+      background: linear-gradient(to right, #ff6a00, #ee0979);
+      color: white;
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 1.7rem;
+      font-weight: bold;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 20px;
+    }
+
+    .controls button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 20px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .controls button:hover {
+      background-color: #0056b3;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 15px;
+      padding: 20px;
+      transition: all 0.5s ease;
+    }
+
+    .gallery.flex {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .image-item {
+      overflow: hidden;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      cursor: pointer;
+      position: relative;
+      background-color: white;
+      animation: fadeIn 0.6s ease forwards;
+      opacity: 0;
+    }
+
+    .image-item img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      transition: transform 0.4s ease-in-out;
+    }
+
+    .image-item:hover img {
+      transform: scale(1.1);
+    }
+
+    .tag {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 5px;
+      font-size: 0.8rem;
+    }
+
+    .add-form {
+      text-align: center;
+      margin: 20px;
+    }
+
+    .add-form input {
+      padding: 8px;
+      margin: 5px;
+      width: 200px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+    }
+
+    .add-form button {
+      padding: 8px 15px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <header>🎨 Colorful Image Gallery with Animations</header>
+
+  <div class="controls">
+    <button onclick="filterImages('all')">All</button>
+    <button onclick="filterImages('nature')">Nature</button>
+    <button onclick="filterImages('city')">City</button>
+    <button onclick="filterImages('animals')">Animals</button>
+    <button onclick="toggleLayout()">Toggle Layout</button>
+  </div>
+
+  <div class="gallery" id="gallery">
+    <div class="image-item" data-category="nature">
+      <img src="https://picsum.photos/id/1015/400/300" alt="Nature">
+      <div class="tag">Nature</div>
+    </div>
+    <div class="image-item" data-category="city">
+      <img src="https://picsum.photos/id/1011/400/300" alt="City">
+      <div class="tag">City</div>
+    </div>
+    <div class="image-item" data-category="animals">
+      <img src="https://picsum.photos/id/1025/400/300" alt="Animal">
+      <div class="tag">Animals</div>
+    </div>
+  </div>
+
+  <div class="add-form">
+    <input type="text" id="imageURL" placeholder="Image URL" />
+    <input type="text" id="category" placeholder="Category" />
+    <button onclick="addImage()">Add Image</button>
+  </div>
+
+  <script>
+    function filterImages(category) {
+      const items = document.querySelectorAll('.image-item');
+      items.forEach(item => {
+        const cat = item.getAttribute('data-category');
+        if (category === 'all' || cat === category) {
+          item.classList.remove('hidden');
+          item.style.animation = 'fadeIn 0.6s ease forwards';
+        } else {
+          item.classList.add('hidden');
+        }
+      });
+    }
+
+    function toggleLayout() {
+      const gallery = document.getElementById('gallery');
+      gallery.classList.toggle('flex');
+    }
+
+    function addImage() {
+      const url = document.getElementById('imageURL').value;
+      const category = document.getElementById('category').value.trim().toLowerCase();
+
+      if (!url || !category) {
+        alert("Please enter both URL and category.");
+        return;
+      }
+
+      const newItem = document.createElement('div');
+      newItem.className = 'image-item';
+      newItem.setAttribute('data-category', category);
+
+      newItem.innerHTML = `
+        <img src="${url}" alt="${category}">
+        <div class="tag">${category.charAt(0).toUpperCase() + category.slice(1)}</div>
+      `;
+
+      const gallery = document.getElementById('gallery');
+      gallery.appendChild(newItem);
+
+      // Re-trigger animation
+      requestAnimationFrame(() => {
+        newItem.style.animation = 'fadeIn 0.6s ease forwards';
+      });
+
+      document.getElementById('imageURL').value = '';
+      document.getElementById('category').value = '';
+    }
+  </script>
+</body>
+</html>
